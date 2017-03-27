@@ -59,8 +59,8 @@ bool dbConnect()
 	my_bool reconnect=1;
 	mysql_options(&mainMysql, MYSQL_OPT_RECONNECT, &reconnect);
 	mainConnection =
-	mysql_real_connect(&mainMysql, "67.240.52.147", "root",
-		"MySQL146", "medius_barpi", 0, 0, 0);
+	mysql_real_connect(&mainMysql, "seanwaclawik.com", "barpi",
+		"MySQL146", "medius_barpi", 5941, 0, 0);
 	if(mainConnection == NULL)
 	{
 		err(mysql_error(&mainMysql));
