@@ -253,7 +253,7 @@ int main(int argc, char *argv[])
 					std::vector<std::string> data;
 					if(loginStatus != 3)
 					{
-						printf("Login Failed: %s\n", tempFromIP.c_str());
+						printf("Login Failed: %s (%d)\n", tempFromIP.c_str(), loginStatus);
 						data.push_back("E");//E for error
 						data.push_back(intTOstring(loginStatus));
 					}
