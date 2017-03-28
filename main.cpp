@@ -36,10 +36,15 @@ int newUser(std::vector<std::string> &data, const int& sockfd, const std::string
 	//get the login mode, CONNECT to connect, PING for ping
 	std::string loginMode=data[1];
 
+	//userid (0 if has none)
+	int newID=atoi(data[2].c_str());
+
+	//CHECK NEW ID HERE IN DB
+
 	if(loginMode == "CONNECT")//connect
 	{
 		//set the user and add it to the data structure
-		user *tempUser=new user(sockfd, fromIP);
+		user *tempUser=new user(sockfd, newID, fromIP);
 		userList.insert(std::pair<int, user*>(sockfd, tempUser));
 	}
 	else if(loginMode == "PING")//ping
@@ -214,7 +219,7 @@ int main(int argc, char *argv[])
 				int bytesRead=readConnection(sockfd2, data);
 				if(bytesRead == 0) continue;//invalid, ignore and listen for the next connection
 
-				//text: "CONNECT|0.01\|"
+				//text: "CONNECT|0.01|123\|"
 
 				//get the ip
 				char fromIP[INET_ADDRSTRLEN];

@@ -19,13 +19,15 @@ struct sqlTables
 	static const std::string BAR;
 	static const std::string EVENT;
 	static const std::string DRINK;
-	static const std::string COMMENT;
 	static const std::string LOCATION;
+	static const std::string MESSAGES;
+	static const std::string REGUSERS;
+	//dont need sessions (web only)
 };
 
 struct sqlFields
 {
-	struct BAR
+	struct BAR//dont need the username/password for a bar
 	{
 		static const std::string ID;
 		static const std::string NAME;
@@ -51,13 +53,6 @@ struct sqlFields
 		static const std::string BARID;
 	};//drinks
 
-	struct COMMENT
-	{
-		static const std::string ID;
-		static const std::string IP;
-		static const std::string MESSAGE;
-	};//comments
-
 	struct LOCATION
 	{
 		static const std::string ID;
@@ -69,8 +64,33 @@ struct sqlFields
 		static const std::string ZIP;
 		static const std::string COUNTRY;
 	};//addresses
+
+	struct MESSAGES
+	{
+		static const std::string ID;
+		static const std::string BARID;
+		static const std::string EVENTID;
+		static const std::string UID;
+		static const std::string TIMESTAMP;
+		static const std::string MESSAGE;
+	};//messages
+
+	struct REGUSERS
+	{
+		static const std::string ID;
+		static const std::string IP;
+	};//regular users
 };
 
+//INSERT
+void insertMessage(MYSQL*, int, int, int, int, std::string);
+
+//SELECT
+bool chatOpenedToday(MYSQL*, int, int, int, int);
+std::vector<std::map<std::string, std::string> >
+getChatMessages(MYSQL*, const int, const int, const int, const int);
+
+//OTHER
 MYSQL* getMainConnection();
 bool dbConnect();
 void dbClose();

@@ -12,13 +12,30 @@
 
 /*
 	* THE ENGINE
+	*
 	* Populate the client
-	* POPULATEALL|password\| (password is the password, change in main)
+	* POPULATE_ALL|password\| (password is the password, change in main)
+	*
+	* 5 Star rating for the bar
+	* RATE_BAR|barid|rating\|
+	*
+	* 5 Star rating for an event
+	* RATE_EVENT|barid|eventid|rating\|
+	*
+	* Chat message (eventid=0 is bar chat)
+	* NEW_CHAT_MSG|barid|eventid|message\|
+	*
+	* Request chat messages (eventid=0 is bar chat)
+	* REQ_CHAT_MSGS|barid|eventid|timestamp\|
 	*/
 
 struct commands
 {
-	static const int POPULATEALL;
+	static const int POPULATE_ALL;
+	static const int RATE_BAR;
+	static const int RATE_EVENT;
+	static const int NEW_CHAT_MSG;
+	static const int REQ_CHAT_MSGS;
 };
 
 struct user;
@@ -34,11 +51,12 @@ struct newServiceArgs
 struct user
 {
 	int sockfd;
+	int id;
 	std::string ip;
 	std::vector<pthread_t*> sThreads;//all the active service threads
 
 	user();
-	user(int, std::string);
+	user(int, int, std::string);
 	~user();
 
 	void newService(std::vector<std::string>&);
