@@ -28,7 +28,7 @@ void stop()
 
 int newUser(std::vector<std::string> &data, const int& sockfd, const std::string& fromIP)
 {
-	if(data.size() < 2) return 2;
+	if(data.size() < 3) return 2;
 
 	std::string clientVersion=data[0];
 	if(strcmp(getVersion().c_str(), clientVersion.c_str()) != 0) return 1;
@@ -39,7 +39,16 @@ int newUser(std::vector<std::string> &data, const int& sockfd, const std::string
 	//userid (0 if has none)
 	int newID=atoi(data[2].c_str());
 
-	//CHECK NEW ID HERE IN DB
+	if(newID == 0)
+	{
+		//assign them one and send it back
+	}
+	else if(newID > 0)
+	{
+		//valid id
+		//if its a different id than in the database, give them a new id
+	}
+	else return 4;
 
 	if(loginMode == "CONNECT")//connect
 	{
@@ -234,6 +243,7 @@ int main(int argc, char *argv[])
 				* 1: Bad version
 				* 2: badly formatted packet
 				* 3: Ping
+				* 4: Invalid user id
 				*/
 
 				if(loginStatus == 0)
@@ -247,7 +257,7 @@ int main(int argc, char *argv[])
 
 					//populate the client
 					data.clear();
-					data.push_back("P");
+					data.push_back("0");
 					data.push_back("password");
 
 					//launch in a new service so the server can keep listening

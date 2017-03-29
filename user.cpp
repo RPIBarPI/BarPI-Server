@@ -65,6 +65,7 @@ void user::startService(newServiceArgs* x)
 	this->sThreads.push_back(x->sThread);
 
 	//for the mysql
+	mysql_thread_init();
 	MYSQL *userConnection=dbUserConnect();
 	x->userConnection=userConnection;
 	if(userConnection == NULL) return;
@@ -84,7 +85,77 @@ void user::startService(newServiceArgs* x)
 			std::string keyPhrase=data[0];
 			if(keyPhrase != "password") break;
 
-			//give the client bar info
+			//give the client bar info (eventually by coordinates and proximity)
+			std::vector<std::map<std::string, std::string> > barInfo=
+				getBars(userConnection);
+
+			if(barInfo.size() > 0)
+			{
+				for(int i=0;i<barInfo.size();++i)
+				{
+					std::vector<std::string> wData;
+					wData.push_back("B");
+					wData.push_back(barInfo[i][sqlFields::BARS::ID]);
+
+					wData.push_back(sqlFields::BARS::NAME);
+					if(barInfo[i][sqlFields::BARS::NAME] != "")
+						wData.push_back(barInfo[i][sqlFields::BARS::NAME]);
+					else
+						wData.push_back("Bar");
+
+					if(barInfo[i][sqlFields::BARS::DESCRIPTION] != "")
+					{
+						wData.push_back(sqlFields::BARS::DESCRIPTION);
+						wData.push_back(barInfo[i][sqlFields::BARS::DESCRIPTION]);
+					}
+
+					wData.push_back(sqlFields::BARS::RATING);
+					wData.push_back(barInfo[i][sqlFields::BARS::RATING]);
+
+					//the location...
+					std::map<std::string, std::string> barLocation=
+						getBarLocation(userConnection, atoi(barInfo[i][sqlFields::BARS::ID].c_str()));
+
+					if(barLocation.size() > 0)
+					{
+						if(barInfo[i][sqlFields::LOCATIONS::APTNO] != "")
+						{
+							wData.push_back(sqlFields::LOCATIONS::APTNO);
+							wData.push_back(barInfo[i][sqlFields::LOCATIONS::APTNO]);
+						}
+						if(barInfo[i][sqlFields::LOCATIONS::STREET] != "")
+						{
+							wData.push_back(sqlFields::LOCATIONS::STREET);
+							wData.push_back(barInfo[i][sqlFields::LOCATIONS::STREET]);
+						}
+						if(barInfo[i][sqlFields::LOCATIONS::CITY] != "")
+						{
+							wData.push_back(sqlFields::LOCATIONS::CITY);
+							wData.push_back(barInfo[i][sqlFields::LOCATIONS::CITY]);
+						}
+						if(barInfo[i][sqlFields::LOCATIONS::STATE] != "")
+						{
+							wData.push_back(sqlFields::LOCATIONS::STATE);
+							wData.push_back(barInfo[i][sqlFields::LOCATIONS::STATE]);
+						}
+						if(barInfo[i][sqlFields::LOCATIONS::ZIP] != "")
+						{
+							wData.push_back(sqlFields::LOCATIONS::ZIP);
+							wData.push_back(barInfo[i][sqlFields::LOCATIONS::ZIP]);
+						}
+						if(barInfo[i][sqlFields::LOCATIONS::COUNTRY] != "")
+						{
+							wData.push_back(sqlFields::LOCATIONS::COUNTRY);
+							wData.push_back(barInfo[i][sqlFields::LOCATIONS::COUNTRY]);
+						}
+					}
+
+					//tell the client wats gucci
+					writeConnection(this->sockfd, wData);
+
+					//loop here to send every appropriate event/special
+				}
+			}
 
 			break;
 		}
