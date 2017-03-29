@@ -13,6 +13,7 @@ const std::string sqlFields::BARS::ID="id";
 const std::string sqlFields::BARS::NAME="name";
 const std::string sqlFields::BARS::DESCRIPTION="description";
 const std::string sqlFields::BARS::RATING="rating";
+const std::string sqlFields::BARS::TIMESRATED="timesrated";
 
 //event
 const std::string sqlFields::EVENTS::ID="id";
@@ -148,7 +149,7 @@ bool chatOpenedToday(MYSQL *userConnection, int userid, int barid, int eventid, 
 	MYSQL_RES *result;
 	MYSQL_ROW row;
 	buffer="SELECT COUNT(*) FROM "+sqlTables::MESSAGES+" WHERE ";
-	buffer+=sqlFields::MESSAGES::UID+"="+intTOstring(userid)+" ";
+	buffer+=sqlFields::MESSAGES::UID+"="+intTOstring(userid)+" AND ";
 	buffer+=sqlFields::MESSAGES::TIMESTAMP+">="+intTOstring(timestamp);
 	state = mysql_query(userConnection, buffer.c_str());
 	if(state == 0)

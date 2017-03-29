@@ -152,8 +152,6 @@ void user::startService(newServiceArgs* x)
 
 					//tell the client wats gucci
 					writeConnection(this->sockfd, wData);
-
-					//loop here to send every appropriate event/special
 				}
 			}
 
@@ -185,7 +183,6 @@ void user::startService(newServiceArgs* x)
 			timeSinceFive+=(5*60*60);
 
 			insertMessage(userConnection, barid, eventid, this->id, timestamp, message);
-			//==============================================
 
 			//get the users
 			std::map<int, user*> userList=getUserList();

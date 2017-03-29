@@ -33,6 +33,7 @@ struct sqlFields
 		static const std::string NAME;
 		static const std::string DESCRIPTION;
 		static const std::string RATING;
+		static const std::string TIMESRATED;
 	};//bars
 
 	struct EVENTS

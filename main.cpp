@@ -39,6 +39,8 @@ int newUser(std::vector<std::string> &data, const int& sockfd, const std::string
 	//userid (0 if has none)
 	int newID=atoi(data[2].c_str());
 
+	newID=1;//TEMPORARY
+
 	if(newID == 0)
 	{
 		//assign them one and send it back
