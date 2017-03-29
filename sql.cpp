@@ -176,14 +176,16 @@ getChatMessages(MYSQL *userConnection, const int barid, const int eventid,
 	MYSQL_RES *result;
 	MYSQL_FIELD *field;
 	MYSQL_ROW row;
-	buffer="SELECT * FROM "+sqlTables::MESSAGES+" WHERE ";
-	buffer+=sqlFields::MESSAGES::BARID+"="+intTOstring(barid)+" AND ";
-	buffer+=sqlFields::MESSAGES::EVENTID+"="+intTOstring(eventid)+" AND ";
-	buffer+=sqlFields::MESSAGES::TIMESTAMP+">="+intTOstring(fromTime);
+	buffer="SELECT * FROM "+sqlTables::MESSAGES+" JOIN "+sqlTables::REGUSERS+" ON ";
+	buffer+=sqlTables::MESSAGES+"."+sqlFields::MESSAGES::UID+"=";
+	buffer+=sqlTables::REGUSERS+"."+sqlFields::REGUSERS::ID+" WHERE ";
+	buffer+=sqlTables::MESSAGES+"."+sqlFields::MESSAGES::BARID+"="+intTOstring(barid)+" AND ";
+	buffer+=sqlTables::MESSAGES+"."+sqlFields::MESSAGES::EVENTID+"="+intTOstring(eventid)+" AND ";
+	buffer+=sqlTables::MESSAGES+"."+sqlFields::MESSAGES::TIMESTAMP+">="+intTOstring(fromTime);
 	if(eventid > 0)//bar chat
 	{
 		int timestamp2=0;
-		buffer+="AND "+sqlFields::MESSAGES::TIMESTAMP+">="+intTOstring(timeSinceFive);
+		buffer+="AND "+sqlTables::MESSAGES+"."+sqlFields::MESSAGES::TIMESTAMP+">="+intTOstring(timeSinceFive);
 	}
 	state = mysql_query(userConnection, buffer.c_str());
 

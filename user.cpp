@@ -197,6 +197,7 @@ void user::startService(newServiceArgs* x)
 					wData.push_back(intTOstring(barid));
 					wData.push_back(intTOstring(eventid));
 					wData.push_back(intTOstring(this->id));
+					wData.push_back(this->ip);
 					wData.push_back(intTOstring(timestamp));
 					wData.push_back(message);
 
@@ -234,6 +235,7 @@ void user::startService(newServiceArgs* x)
 					wData.push_back(intTOstring(barid));
 					wData.push_back(intTOstring(eventid));
 					wData.push_back(newMessages[i][sqlFields::MESSAGES::UID]);
+					wData.push_back(newMessages[i][sqlFields::REGUSERS::IP]);
 					wData.push_back(newMessages[i][sqlFields::MESSAGES::TIMESTAMP]);
 					wData.push_back(newMessages[i][sqlFields::MESSAGES::MESSAGE]);
 
