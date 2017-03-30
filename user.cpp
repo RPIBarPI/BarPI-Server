@@ -179,6 +179,8 @@ void user::startService(newServiceArgs* x)
 			int timestamp=time(NULL);
 			//time since midnight
 			int timeSinceFive=time(NULL)-(time(NULL)%(24*60*60));
+			//???
+			timeSinceFive-=(24*60*60);
 			//time since 5am (after all bars are legally required to close, except in nevada)
 			timeSinceFive+=(5*60*60);
 
