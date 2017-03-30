@@ -227,7 +227,7 @@ bool dbConnect()
 	my_bool reconnect=1;
 	mysql_options(&mainMysql, MYSQL_OPT_RECONNECT, &reconnect);
 	mainConnection =
-	mysql_real_connect(&mainMysql, "seanwaclawik.com", "barpi",
+	mysql_real_connect(&mainMysql, "127.0.0.1", "barpi",
 		"MySQL146", "medius_barpi", 5941, 0, 0);
 	if(mainConnection == NULL)
 	{
@@ -253,7 +253,7 @@ MYSQL* dbUserConnect()
 	my_bool reconnect=1;
 	mysql_options(userConnection, MYSQL_OPT_RECONNECT, &reconnect);
 	userConnection =
-	mysql_real_connect(userConnection, "seanwaclawik.com", "barpi",
+	mysql_real_connect(userConnection, "127.0.0.1", "barpi",
 		"MySQL146", "medius_barpi", 5941, 0, 0);
 	return userConnection;
 }
