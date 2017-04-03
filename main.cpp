@@ -8,7 +8,7 @@ struct sqlFields;
 std::map<int, user*> userList;//user pointer
 
 bool running=true;
-
+pthread_mutex_t *mutex;
 std::string version="0.01";
 
 std::string getVersion()
@@ -55,8 +55,10 @@ int newUser(std::vector<std::string> &data, const int& sockfd, const std::string
 	if(loginMode == "CONNECT")//connect
 	{
 		//set the user and add it to the data structure
+		pthread_mutex_lock(mutex);
 		user *tempUser=new user(sockfd, newID, fromIP);
 		userList.insert(std::pair<int, user*>(sockfd, tempUser));
+		pthread_mutex_unlock(mutex);
 	}
 	else if(loginMode == "PING")//ping
 	{
@@ -78,7 +80,9 @@ void logout(int sockfd)
 		user *tempUser=userList[sockfd];
 
 		//delete it from the map
+		pthread_mutex_lock(mutex);
 		userList.erase(userList.find(sockfd));
+		pthread_mutex_unlock(mutex);
 
 		//delete the user
 		delete tempUser;
@@ -181,6 +185,9 @@ int main(int argc, char *argv[])
 	//database
 	if(!dbConnect()) err("Could not connect to the database\n");
 	else printf("Connected to the database\n");
+
+	//mutex
+	mutex=(pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
 
 	//command line
 	pthread_t commandThread;
@@ -316,6 +323,8 @@ int main(int argc, char *argv[])
 		for(int i=0;i<(itr->second)->sThreads.size();++i)
 			pthread_join(*(itr->second)->sThreads[i], NULL);
 	}
+
+	free(mutex);
 
 	dbClose();
 
