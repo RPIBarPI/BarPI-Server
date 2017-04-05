@@ -111,6 +111,8 @@ void user::startService(newServiceArgs* x)
 
 					wData.push_back(sqlFields::BARS::RATING);
 					wData.push_back(barInfo[i][sqlFields::BARS::RATING]);
+					wData.push_back(sqlFields::BARS::TIMESRATED);
+					wData.push_back(barInfo[i][sqlFields::BARS::TIMESRATED]);
 
 					//the location...
 					std::map<std::string, std::string> barLocation=
