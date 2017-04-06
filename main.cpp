@@ -9,7 +9,7 @@ std::map<int, user*> userList;//user pointer
 
 bool running=true;
 pthread_mutex_t *mutex;
-std::string version="0.01";
+std::string version="0.02";
 
 std::string getVersion()
 {
@@ -39,16 +39,18 @@ int newUser(std::vector<std::string> &data, const int& sockfd, const std::string
 	//userid (0 if has none)
 	int newID=atoi(data[2].c_str());
 
-	newID=1;//TEMPORARY
-
 	if(newID == 0)
 	{
 		//assign them one and send it back
+		newID=insertRegUser(fromIP);
 	}
 	else if(newID > 0)
 	{
-		//valid id
 		//if its a different id than in the database, give them a new id
+		if(!checkRegID(newID, fromIP))
+		{
+			newID=insertRegUser(fromIP);
+		}
 	}
 	else return 4;
 

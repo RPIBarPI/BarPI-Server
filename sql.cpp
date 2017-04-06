@@ -55,6 +55,25 @@ const std::string sqlFields::REGUSERS::IP="ip";
 MYSQL *mainConnection, mainMysql;
 
 //INSERTS
+int insertRegUser(std::string newIP)
+{
+	std::string buffer;
+	MYSQL_RES *result;
+	MYSQL_ROW row;
+    //escape sequence for the ip
+	char *escIP=new char[newIP.length()*2+1];
+	mysql_real_escape_string(mainConnection, escIP, newIP.c_str(), newIP.length());
+	newIP.assign(escIP);
+	delete[] escIP;
+    //the query
+	buffer="INSERT INTO "+sqlTables::REGUSERS+"("+sqlFields::REGUSERS::IP+") ";
+	buffer+="VALUES('"+newIP+"')";
+	mysql_query(mainConnection, buffer.c_str());
+	int newID=mysql_insert_id(mainConnection);
+	if(newID > 0) return newID;
+	return -1;
+}
+
 void insertMessage(MYSQL *userConnection, int barid, int eventid, int uid, int timestamp, std::string message)
 {
 	std::string buffer;
@@ -263,4 +282,35 @@ void dbUserClose(MYSQL *userConnection)
      //close the connection
 	mysql_close(userConnection);
 	delete userConnection;
+}
+
+bool checkRegID(int regID, std::string ip)
+{
+    //does the password match?
+	std::string buffer;
+	int state;
+	MYSQL_RES *result;
+	MYSQL_ROW row;
+    //escape sequence for the ip
+	char *escIP=new char[ip.length()*2+1];
+	mysql_real_escape_string(mainConnection, escIP, ip.c_str(), ip.length());
+	ip.assign(escIP);
+	delete[] escIP;
+	buffer="SELECT COUNT(*) FROM "+sqlTables::REGUSERS+" WHERE ";
+	buffer+=sqlFields::REGUSERS::ID+"="+intTOstring(regID)+" AND ";
+	buffer+=sqlFields::REGUSERS::IP+"='"+ip+"'";
+	state = mysql_query(mainConnection, buffer.c_str());
+	if(state == 0)
+	{
+		result = mysql_store_result(mainConnection);
+		row=mysql_fetch_row(result);
+		mysql_free_result(result);
+		if(row != NULL)
+		{
+			int users=atoi(row[0]);
+			return (users > 0);
+		}
+		else return false;
+	}
+	return false;
 }

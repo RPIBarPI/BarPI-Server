@@ -85,6 +85,7 @@ struct sqlFields
 };
 
 //INSERT
+int insertRegUser(std::string);
 void insertMessage(MYSQL*, int, int, int, int, std::string);
 
 //SELECT
@@ -100,5 +101,6 @@ bool dbConnect();
 void dbClose();
 MYSQL* dbUserConnect();
 void dbUserClose(MYSQL*);
+bool checkRegID(int, std::string);
 
 #endif

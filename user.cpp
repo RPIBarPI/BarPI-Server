@@ -85,6 +85,16 @@ void user::startService(newServiceArgs* x)
 			std::string keyPhrase=data[0];
 			if(keyPhrase != "password") break;
 
+			std::vector<std::string> wData;
+
+			//tell the user their id
+			wData.push_back("I");
+			wData.push_back(intTOstring(this->id));
+
+			//tell the client wats gucci
+			writeConnection(this->sockfd, wData);
+			wData.clear();
+
 			//give the client bar info (eventually by coordinates and proximity)
 			std::vector<std::map<std::string, std::string> > barInfo=
 				getBars(userConnection);
@@ -93,7 +103,6 @@ void user::startService(newServiceArgs* x)
 			{
 				for(int i=0;i<barInfo.size();++i)
 				{
-					std::vector<std::string> wData;
 					wData.push_back("B");
 					wData.push_back(barInfo[i][sqlFields::BARS::ID]);
 
