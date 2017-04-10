@@ -29,6 +29,7 @@ const std::string sqlFields::DRINKS::NAME="name";
 const std::string sqlFields::DRINKS::DESCRIPTION="description";
 const std::string sqlFields::DRINKS::PRICE="price";
 const std::string sqlFields::DRINKS::BARID="barid";
+const std::string sqlFields::DRINKS::ISSPECIALTODAY="IsSpecialToday";
 
 //location
 const std::string sqlFields::LOCATIONS::ID="id";
@@ -39,6 +40,8 @@ const std::string sqlFields::LOCATIONS::CITY="city";
 const std::string sqlFields::LOCATIONS::STATE="state";
 const std::string sqlFields::LOCATIONS::ZIP="zip";
 const std::string sqlFields::LOCATIONS::COUNTRY="country";
+const std::string sqlFields::LOCATIONS::LONGITUDE="longitude";
+const std::string sqlFields::LOCATIONS::LATITUDE="latitude";
 
 //messages
 const std::string sqlFields::MESSAGES::ID="id";
@@ -148,11 +151,11 @@ getBarLocation(MYSQL *userConnection, int barid)
 		for(int i=0;(field=mysql_fetch_field(result));++i)
 			fields[i]=field->name;
 
-		while(row=mysql_fetch_row(result))
+		row=mysql_fetch_row(result);
+		if(row != NULL)
 		{
 			for(int i=0;i<num_fields;++i)
 				newRow.insert(std::pair<std::string, std::string>(fields[i], row[i]));
-			return newRow;
 		}
 
 		mysql_free_result(result);

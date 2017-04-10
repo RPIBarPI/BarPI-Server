@@ -53,6 +53,7 @@ struct sqlFields
 		static const std::string DESCRIPTION;
 		static const std::string PRICE;
 		static const std::string BARID;
+		static const std::string ISSPECIALTODAY;
 	};//drinks
 
 	struct LOCATIONS
@@ -65,6 +66,8 @@ struct sqlFields
 		static const std::string STATE;
 		static const std::string ZIP;
 		static const std::string COUNTRY;
+		static const std::string LONGITUDE;
+		static const std::string LATITUDE;
 	};//addresses
 
 	struct MESSAGES

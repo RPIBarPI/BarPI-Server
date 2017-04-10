@@ -129,40 +129,51 @@ void user::startService(newServiceArgs* x)
 
 					if(barLocation.size() > 0)
 					{
-						if(barInfo[i][sqlFields::LOCATIONS::APTNO] != "")
+						if(barLocation[sqlFields::LOCATIONS::APTNO] != "")
 						{
 							wData.push_back(sqlFields::LOCATIONS::APTNO);
-							wData.push_back(barInfo[i][sqlFields::LOCATIONS::APTNO]);
+							wData.push_back(barLocation[sqlFields::LOCATIONS::APTNO]);
 						}
-						if(barInfo[i][sqlFields::LOCATIONS::STREET] != "")
+						if(barLocation[sqlFields::LOCATIONS::STREET] != "")
 						{
 							wData.push_back(sqlFields::LOCATIONS::STREET);
-							wData.push_back(barInfo[i][sqlFields::LOCATIONS::STREET]);
+							wData.push_back(barLocation[sqlFields::LOCATIONS::STREET]);
 						}
-						if(barInfo[i][sqlFields::LOCATIONS::CITY] != "")
+						if(barLocation[sqlFields::LOCATIONS::CITY] != "")
 						{
 							wData.push_back(sqlFields::LOCATIONS::CITY);
-							wData.push_back(barInfo[i][sqlFields::LOCATIONS::CITY]);
+							wData.push_back(barLocation[sqlFields::LOCATIONS::CITY]);
 						}
-						if(barInfo[i][sqlFields::LOCATIONS::STATE] != "")
+						if(barLocation[sqlFields::LOCATIONS::STATE] != "")
 						{
 							wData.push_back(sqlFields::LOCATIONS::STATE);
-							wData.push_back(barInfo[i][sqlFields::LOCATIONS::STATE]);
+							wData.push_back(barLocation[sqlFields::LOCATIONS::STATE]);
 						}
-						if(barInfo[i][sqlFields::LOCATIONS::ZIP] != "")
+						if(barLocation[sqlFields::LOCATIONS::ZIP] != "")
 						{
 							wData.push_back(sqlFields::LOCATIONS::ZIP);
-							wData.push_back(barInfo[i][sqlFields::LOCATIONS::ZIP]);
+							wData.push_back(barLocation[sqlFields::LOCATIONS::ZIP]);
 						}
-						if(barInfo[i][sqlFields::LOCATIONS::COUNTRY] != "")
+						if(barLocation[sqlFields::LOCATIONS::COUNTRY] != "")
 						{
 							wData.push_back(sqlFields::LOCATIONS::COUNTRY);
-							wData.push_back(barInfo[i][sqlFields::LOCATIONS::COUNTRY]);
+							wData.push_back(barLocation[sqlFields::LOCATIONS::COUNTRY]);
+						}
+						if(barLocation[sqlFields::LOCATIONS::LONGITUDE] != "")
+						{
+							wData.push_back(sqlFields::LOCATIONS::LONGITUDE);
+							wData.push_back(barLocation[sqlFields::LOCATIONS::LONGITUDE]);
+						}
+						if(barLocation[sqlFields::LOCATIONS::LATITUDE] != "")
+						{
+							wData.push_back(sqlFields::LOCATIONS::LATITUDE);
+							wData.push_back(barLocation[sqlFields::LOCATIONS::LATITUDE]);
 						}
 					}
 
 					//tell the client wats gucci
 					writeConnection(this->sockfd, wData);
+					wData.clear();
 				}
 			}
 
