@@ -17,7 +17,7 @@
 std::string getVersion();
 std::map<int, user*> getUserList();
 void stop();
-int newUser(std::vector<std::string>&, const int&, const std::string&);
+int newUser(std::vector<std::string>&, const int&, const std::string&, int&);
 void logout(int);
 void executeCommand(std::string);
 void* getCommands(void*);

@@ -5,7 +5,7 @@
 struct sqlTables;
 struct sqlFields;
 
-std::map<int, user*> userList;//user pointer
+std::map<int, user*> userList;//reguserid, user pointer
 
 bool running=true;
 pthread_mutex_t *mutex;
@@ -26,7 +26,7 @@ void stop()
 	running=false;
 }
 
-int newUser(std::vector<std::string> &data, const int& sockfd, const std::string& fromIP)
+int newUser(std::vector<std::string> &data, const int& sockfd, const std::string& fromIP, int& regUserID)
 {
 	if(data.size() < 3) return 2;
 
@@ -37,19 +37,19 @@ int newUser(std::vector<std::string> &data, const int& sockfd, const std::string
 	std::string loginMode=data[1];
 
 	//userid (0 if has none)
-	int newID=atoi(data[2].c_str());
+	regUserID=atoi(data[2].c_str());
 
-	if(newID == 0)
+	if(regUserID == 0)
 	{
 		//assign them one and send it back
-		newID=insertRegUser(fromIP);
+		regUserID=insertRegUser(fromIP);
 	}
-	else if(newID > 0)
+	else if(regUserID > 0)
 	{
 		//if its a different id than in the database, give them a new id
-		if(!checkRegID(newID, fromIP))
+		if(!checkRegID(regUserID, fromIP))
 		{
-			newID=insertRegUser(fromIP);
+			regUserID=insertRegUser(fromIP);
 		}
 	}
 	else return 4;
@@ -58,8 +58,8 @@ int newUser(std::vector<std::string> &data, const int& sockfd, const std::string
 	{
 		//set the user and add it to the data structure
 		pthread_mutex_lock(mutex);
-		user *tempUser=new user(sockfd, newID, fromIP);
-		userList.insert(std::pair<int, user*>(sockfd, tempUser));
+		user *tempUser=new user(sockfd, regUserID, fromIP);
+		userList.insert(std::pair<int, user*>(regUserID, tempUser));
 		pthread_mutex_unlock(mutex);
 	}
 	else if(loginMode == "PING")//ping
@@ -70,20 +70,20 @@ int newUser(std::vector<std::string> &data, const int& sockfd, const std::string
 	return 0;
 }
 
-void logout(int sockfd)
+void logout(int regUserID)
 {
 	//does the user exist in the map?
-	if(userList.find(sockfd) != userList.end())
+	if(userList.find(regUserID) != userList.end())
 	{
 		//close the connection
-		close(sockfd);
+		close(userList[regUserID]->sockfd);
 
 		//save the user locally
-		user *tempUser=userList[sockfd];
+		user *tempUser=userList[regUserID];
 
 		//delete it from the map
 		pthread_mutex_lock(mutex);
-		userList.erase(userList.find(sockfd));
+		userList.erase(userList.find(regUserID));
 		pthread_mutex_unlock(mutex);
 
 		//delete the user
@@ -213,7 +213,6 @@ int main(int argc, char *argv[])
 		max_sock=sockfd;
 
 		//set the max sock
-		//could also use (itr->first)
 		for(std::map<int, user*>::iterator itr=userList.begin();itr!=userList.end();++itr)
 		{
 			FD_SET((itr->second)->sockfd, &fdarr);
@@ -246,8 +245,11 @@ int main(int argc, char *argv[])
 				inet_ntop(AF_INET, &from, fromIP, INET_ADDRSTRLEN);
 				std::string tempFromIP=fromIP;
 
+				//the user id
+				int regUserID=0;
+
 				//login the new user
-				int loginStatus=newUser(data, sockfd2, tempFromIP);
+				int loginStatus=newUser(data, sockfd2, tempFromIP, regUserID);
 
 				/* loginStatus info
 				* 0: success
@@ -272,7 +274,7 @@ int main(int argc, char *argv[])
 					data.push_back("password");
 
 					//launch in a new service so the server can keep listening
-					userList[sockfd2]->newService(data);
+					userList[regUserID]->newService(data);
 				}
 				else//send back the error message
 				{
@@ -304,7 +306,7 @@ int main(int argc, char *argv[])
 					if(bytesRead <= 0)
 					{
 						printf("Logout: %s\n", (itr->second)->ip.c_str());
-						logout(itr->first);
+						logout((itr->second)->id);
 					}
 					else if(bytesRead > 0)
 					{
