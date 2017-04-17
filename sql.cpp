@@ -2,9 +2,10 @@
 
 //tables
 const std::string sqlTables::BARS="bars";
-const std::string sqlTables::EVENTS="events";
-const std::string sqlTables::DRINKS="drinks";
+const std::string sqlTables::EVENTS="event";
+const std::string sqlTables::DRINKS="drink";
 const std::string sqlTables::LOCATIONS="locations";
+const std::string sqlTables::SPECIALINFO="specialinfo";
 const std::string sqlTables::REGUSERS="regusers";
 const std::string sqlTables::MESSAGES="messages";
 
@@ -17,11 +18,10 @@ const std::string sqlFields::BARS::TIMESRATED="timesrated";
 
 //event
 const std::string sqlFields::EVENTS::ID="id";
+const std::string sqlFields::EVENTS::BARID="barid";
 const std::string sqlFields::EVENTS::NAME="name";
 const std::string sqlFields::EVENTS::DESCRIPTION="description";
-const std::string sqlFields::EVENTS::DRINKID="drinkid";
-const std::string sqlFields::EVENTS::PRICE="price";
-const std::string sqlFields::EVENTS::SPECIAL="special";
+const std::string sqlFields::EVENTS::ISEVENTTODAY="IsEventToday";
 
 //drink
 const std::string sqlFields::DRINKS::ID="id";
@@ -29,7 +29,7 @@ const std::string sqlFields::DRINKS::NAME="name";
 const std::string sqlFields::DRINKS::DESCRIPTION="description";
 const std::string sqlFields::DRINKS::PRICE="price";
 const std::string sqlFields::DRINKS::BARID="barid";
-const std::string sqlFields::DRINKS::ISSPECIALTODAY="IsSpecialToday";
+const std::string sqlFields::DRINKS::ISONMENUTODAY="IsOnMenuToday";
 
 //location
 const std::string sqlFields::LOCATIONS::ID="id";
@@ -42,6 +42,12 @@ const std::string sqlFields::LOCATIONS::ZIP="zip";
 const std::string sqlFields::LOCATIONS::COUNTRY="country";
 const std::string sqlFields::LOCATIONS::LONGITUDE="longitude";
 const std::string sqlFields::LOCATIONS::LATITUDE="latitude";
+
+//specials' info
+const std::string sqlFields::SPECIALINFO::ID="id";
+const std::string sqlFields::SPECIALINFO::EVENTID="eventid";
+const std::string sqlFields::SPECIALINFO::DRINKID="drinkid";
+const std::string sqlFields::SPECIALINFO::PRICE="price";
 
 //messages
 const std::string sqlFields::MESSAGES::ID="id";
@@ -162,6 +168,80 @@ getBarLocation(MYSQL *userConnection, int barid)
 	}
 
 	return newRow;
+}
+
+std::vector<std::map<std::string, std::string> >
+getDrinks(MYSQL *userConnection, int barid)
+{
+	std::string buffer;
+	int state;
+	MYSQL_RES *result;
+	MYSQL_FIELD *field;
+	MYSQL_ROW row;
+	buffer="SELECT * FROM "+sqlTables::DRINKS+" WHERE ";
+	buffer+=sqlFields::DRINKS::BARID+"="+intTOstring(barid)+" AND ";
+	buffer+=sqlFields::DRINKS::ISONMENUTODAY+"=1";
+	state = mysql_query(userConnection, buffer.c_str());
+
+	std::vector<std::map<std::string, std::string> > rows;
+	if(state == 0)
+	{
+		result = mysql_store_result(userConnection);
+
+		int num_fields=mysql_num_fields(result);
+		char* fields[num_fields];
+		for(int i=0;(field=mysql_fetch_field(result));++i)
+			fields[i]=field->name;
+
+		while(row=mysql_fetch_row(result))
+		{
+			std::map<std::string, std::string> newRow;
+			for(int i=0;i<num_fields;++i)
+				newRow.insert(std::pair<std::string, std::string>(fields[i], row[i]));
+			rows.push_back(newRow);
+		}
+
+		mysql_free_result(result);
+	}
+
+	return rows;
+}
+
+std::vector<std::map<std::string, std::string> >
+getEvents(MYSQL *userConnection, int barid)
+{
+	std::string buffer;
+	int state;
+	MYSQL_RES *result;
+	MYSQL_FIELD *field;
+	MYSQL_ROW row;
+	buffer="SELECT * FROM "+sqlTables::EVENTS+" WHERE ";
+	buffer+=sqlFields::EVENTS::BARID+"="+intTOstring(barid)+" AND ";
+	buffer+=sqlFields::EVENTS::ISEVENTTODAY+"=1";
+	state = mysql_query(userConnection, buffer.c_str());
+
+	std::vector<std::map<std::string, std::string> > rows;
+	if(state == 0)
+	{
+		result = mysql_store_result(userConnection);
+
+		int num_fields=mysql_num_fields(result);
+		char* fields[num_fields];
+		for(int i=0;(field=mysql_fetch_field(result));++i)
+			fields[i]=field->name;
+
+		while(row=mysql_fetch_row(result))
+		{
+			std::map<std::string, std::string> newRow;
+			for(int i=0;i<num_fields;++i)
+				newRow.insert(std::pair<std::string, std::string>(fields[i], row[i]));
+			rows.push_back(newRow);
+		}
+
+		mysql_free_result(result);
+	}
+
+	return rows;
 }
 
 bool chatOpenedToday(MYSQL *userConnection, int userid, int barid, int eventid, int timestamp)

@@ -8,6 +8,9 @@ const int commands::RATE_BAR=1;
 const int commands::RATE_EVENT=2;
 const int commands::NEW_CHAT_MSG=3;
 const int commands::REQ_CHAT_MSGS=4;
+const int commands::REQ_BAR_DRINKS=5;
+const int commands::REQ_BAR_EVENTS=6;
+const int commands::REQ_BAR_DRINKSANDEVENTS=7;
 
 user::user()
 {
@@ -265,6 +268,169 @@ void user::startService(newServiceArgs* x)
 
 					//tell the client wats gucci
 					writeConnection(this->sockfd, wData);
+				}
+			}
+
+			break;
+		}
+		case commands::REQ_BAR_DRINKS://request the drinks that a bar is serving
+		{
+
+			if(data.size() < 1) break;
+
+			int barid=atoi(data[0].c_str());
+
+			std::vector<std::string> wData;
+
+			//give the client the bar's menu (drinks)
+			std::vector<std::map<std::string, std::string> > drinkList=
+				getDrinks(userConnection, barid);
+
+			if(drinkList.size() > 0)
+			{
+				for(int i=0;i<drinkList.size();++i)
+				{
+					wData.push_back("D");
+					wData.push_back(data[0].c_str());//bar id
+					wData.push_back(drinkList[i][sqlFields::DRINKS::ID]);
+
+					if(drinkList[i][sqlFields::DRINKS::NAME] != "")
+					{
+						wData.push_back(sqlFields::DRINKS::NAME);
+						wData.push_back(drinkList[i][sqlFields::DRINKS::NAME]);
+					}
+
+					if(drinkList[i][sqlFields::DRINKS::DESCRIPTION] != "")
+					{
+						wData.push_back(sqlFields::DRINKS::DESCRIPTION);
+						wData.push_back(drinkList[i][sqlFields::DRINKS::DESCRIPTION]);
+					}
+
+					if(drinkList[i][sqlFields::DRINKS::PRICE] != "")
+					{
+						wData.push_back(sqlFields::DRINKS::PRICE);
+						wData.push_back(drinkList[i][sqlFields::DRINKS::PRICE]);
+					}
+
+					//tell the client wats gucci
+					writeConnection(this->sockfd, wData);
+					wData.clear();
+				}
+			}
+
+			break;
+		}
+		case commands::REQ_BAR_EVENTS://request the events of a bar
+		{
+			if(data.size() < 1) break;
+
+			int barid=atoi(data[0].c_str());
+
+			std::vector<std::string> wData;
+
+			//give the client the bar's events
+			std::vector<std::map<std::string, std::string> > eventList=
+				getEvents(userConnection, barid);
+
+			if(eventList.size() > 0)
+			{
+				for(int i=0;i<eventList.size();++i)
+				{
+					wData.push_back("H");
+					wData.push_back(data[0].c_str());//bar id
+					wData.push_back(eventList[i][sqlFields::EVENTS::ID]);
+
+					if(eventList[i][sqlFields::EVENTS::NAME] != "")
+					{
+						wData.push_back(sqlFields::EVENTS::NAME);
+						wData.push_back(eventList[i][sqlFields::EVENTS::NAME]);
+					}
+
+					if(eventList[i][sqlFields::EVENTS::DESCRIPTION] != "")
+					{
+						wData.push_back(sqlFields::EVENTS::DESCRIPTION);
+						wData.push_back(eventList[i][sqlFields::EVENTS::DESCRIPTION]);
+					}
+
+					//tell the client wats gucci
+					writeConnection(this->sockfd, wData);
+					wData.clear();
+				}
+			}
+
+			break;
+		}
+		case commands::REQ_BAR_DRINKSANDEVENTS:
+		{
+			if(data.size() < 1) break;
+
+			int barid=atoi(data[0].c_str());
+
+			std::vector<std::string> wData;
+
+			//give the client the bar's menu (drinks)
+			std::vector<std::map<std::string, std::string> > drinkList=
+				getDrinks(userConnection, barid);
+
+			if(drinkList.size() > 0)
+			{
+				for(int i=0;i<drinkList.size();++i)
+				{
+					wData.push_back("D");
+					wData.push_back(data[0].c_str());//bar id
+					wData.push_back(drinkList[i][sqlFields::DRINKS::ID]);
+
+					if(drinkList[i][sqlFields::DRINKS::NAME] != "")
+					{
+						wData.push_back(sqlFields::DRINKS::NAME);
+						wData.push_back(drinkList[i][sqlFields::DRINKS::NAME]);
+					}
+
+					if(drinkList[i][sqlFields::DRINKS::DESCRIPTION] != "")
+					{
+						wData.push_back(sqlFields::DRINKS::DESCRIPTION);
+						wData.push_back(drinkList[i][sqlFields::DRINKS::DESCRIPTION]);
+					}
+
+					if(drinkList[i][sqlFields::DRINKS::PRICE] != "")
+					{
+						wData.push_back(sqlFields::DRINKS::PRICE);
+						wData.push_back(drinkList[i][sqlFields::DRINKS::PRICE]);
+					}
+
+					//tell the client wats gucci
+					writeConnection(this->sockfd, wData);
+					wData.clear();
+				}
+			}
+
+			//give the client the bar's events
+			std::vector<std::map<std::string, std::string> > eventList=
+				getEvents(userConnection, barid);
+
+			if(eventList.size() > 0)
+			{
+				for(int i=0;i<eventList.size();++i)
+				{
+					wData.push_back("H");
+					wData.push_back(data[0].c_str());//bar id
+					wData.push_back(eventList[i][sqlFields::EVENTS::ID]);
+
+					if(eventList[i][sqlFields::EVENTS::NAME] != "")
+					{
+						wData.push_back(sqlFields::EVENTS::NAME);
+						wData.push_back(eventList[i][sqlFields::EVENTS::NAME]);
+					}
+
+					if(eventList[i][sqlFields::EVENTS::DESCRIPTION] != "")
+					{
+						wData.push_back(sqlFields::EVENTS::DESCRIPTION);
+						wData.push_back(eventList[i][sqlFields::EVENTS::DESCRIPTION]);
+					}
+
+					//tell the client wats gucci
+					writeConnection(this->sockfd, wData);
+					wData.clear();
 				}
 			}
 

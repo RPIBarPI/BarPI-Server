@@ -27,6 +27,15 @@
 	*
 	* Request chat messages (eventid=0 is bar chat)
 	* REQ_CHAT_MSGS|barid|eventid|timestamp\|
+	*
+	* Request Bar Drinks
+	* REQ_BAR_DRINKS|barid\|
+	*
+	* Request Bar Events
+	* REQ_BAR_EVENTS|barid\|
+	*
+	* Request Bar Drinks and Events
+	* REQ_BAR_DRINKSANDEVENTS|barid\|
 	*/
 
 struct commands
@@ -36,6 +45,9 @@ struct commands
 	static const int RATE_EVENT;
 	static const int NEW_CHAT_MSG;
 	static const int REQ_CHAT_MSGS;
+	static const int REQ_BAR_DRINKS;
+	static const int REQ_BAR_EVENTS;
+	static const int REQ_BAR_DRINKSANDEVENTS;
 };
 
 struct user;
