@@ -34,8 +34,11 @@
 	* Request Bar Events
 	* REQ_BAR_EVENTS|barid\|
 	*
+	* Request Bar Speicals
+	* REQ_BAR_SPEICALS|barid\|
+	*
 	* Request Bar Drinks and Events
-	* REQ_BAR_DRINKSANDEVENTS|barid\|
+	* REQ_BAR_FULL|barid\|
 	*/
 
 struct commands
@@ -47,7 +50,8 @@ struct commands
 	static const int REQ_CHAT_MSGS;
 	static const int REQ_BAR_DRINKS;
 	static const int REQ_BAR_EVENTS;
-	static const int REQ_BAR_DRINKSANDEVENTS;
+	static const int REQ_BAR_SPECIALS;
+	static const int REQ_BAR_FULL;
 };
 
 struct user;

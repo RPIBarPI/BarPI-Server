@@ -244,6 +244,45 @@ getEvents(MYSQL *userConnection, int barid)
 	return rows;
 }
 
+std::vector<std::map<std::string, std::string> >
+getSpecials(MYSQL *userConnection, int barid)
+{
+	std::string buffer;
+	int state;
+	MYSQL_RES *result;
+	MYSQL_FIELD *field;
+	MYSQL_ROW row;
+	buffer="SELECT * FROM "+sqlTables::EVENTS+" JOIN ";
+	buffer+=sqlTables::SPECIALINFO+" ON "+sqlTables::EVENTS;
+	buffer+="."+sqlFields::EVENTS::ID+"="+sqlTables::SPECIALINFO;
+	buffer+="."+sqlFields::SPECIALINFO::EVENTID+" WHERE ";
+	buffer+=sqlTables::EVENTS+"."+sqlFields::EVENTS::ISEVENTTODAY+"=1";
+	state = mysql_query(userConnection, buffer.c_str());
+
+	std::vector<std::map<std::string, std::string> > rows;
+	if(state == 0)
+	{
+		result = mysql_store_result(userConnection);
+
+		int num_fields=mysql_num_fields(result);
+		char* fields[num_fields];
+		for(int i=0;(field=mysql_fetch_field(result));++i)
+			fields[i]=field->name;
+
+		while(row=mysql_fetch_row(result))
+		{
+			std::map<std::string, std::string> newRow;
+			for(int i=0;i<num_fields;++i)
+				newRow.insert(std::pair<std::string, std::string>(fields[i], row[i]));
+			rows.push_back(newRow);
+		}
+
+		mysql_free_result(result);
+	}
+
+	return rows;
+}
+
 bool chatOpenedToday(MYSQL *userConnection, int userid, int barid, int eventid, int timestamp)
 {
 	std::string buffer;

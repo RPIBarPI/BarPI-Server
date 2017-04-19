@@ -10,7 +10,8 @@ const int commands::NEW_CHAT_MSG=3;
 const int commands::REQ_CHAT_MSGS=4;
 const int commands::REQ_BAR_DRINKS=5;
 const int commands::REQ_BAR_EVENTS=6;
-const int commands::REQ_BAR_DRINKSANDEVENTS=7;
+const int commands::REQ_BAR_SPECIALS=7;
+const int commands::REQ_BAR_FULL=8;
 
 user::user()
 {
@@ -275,7 +276,6 @@ void user::startService(newServiceArgs* x)
 		}
 		case commands::REQ_BAR_DRINKS://request the drinks that a bar is serving
 		{
-
 			if(data.size() < 1) break;
 
 			int barid=atoi(data[0].c_str());
@@ -360,7 +360,53 @@ void user::startService(newServiceArgs* x)
 
 			break;
 		}
-		case commands::REQ_BAR_DRINKSANDEVENTS:
+		case commands::REQ_BAR_SPECIALS://request the specials of a bar
+		{
+			if(data.size() < 1) break;
+
+			int barid=atoi(data[0].c_str());
+
+			std::vector<std::string> wData;
+
+			//give the client the bar's specials
+			std::vector<std::map<std::string, std::string> > specialList=
+				getSpecials(userConnection, barid);
+
+			if(specialList.size() > 0)
+			{
+				for(int i=0;i<specialList.size();++i)
+				{
+					wData.push_back("S");
+					wData.push_back(data[0].c_str());//bar id
+					wData.push_back(specialList[i][sqlFields::SPECIALINFO::ID]);
+
+					if(specialList[i][sqlFields::SPECIALINFO::EVENTID] != "")
+					{
+						wData.push_back(sqlFields::SPECIALINFO::EVENTID);
+						wData.push_back(specialList[i][sqlFields::SPECIALINFO::EVENTID]);
+					}
+
+					if(specialList[i][sqlFields::SPECIALINFO::DRINKID] != "")
+					{
+						wData.push_back(sqlFields::SPECIALINFO::DRINKID);
+						wData.push_back(specialList[i][sqlFields::SPECIALINFO::DRINKID]);
+					}
+
+					if(specialList[i][sqlFields::SPECIALINFO::PRICE] != "")
+					{
+						wData.push_back(sqlFields::SPECIALINFO::PRICE);
+						wData.push_back(specialList[i][sqlFields::SPECIALINFO::PRICE]);
+					}
+
+					//tell the client wats gucci
+					writeConnection(this->sockfd, wData);
+					wData.clear();
+				}
+			}
+
+			break;
+		}
+		case commands::REQ_BAR_FULL:
 		{
 			if(data.size() < 1) break;
 
@@ -426,6 +472,42 @@ void user::startService(newServiceArgs* x)
 					{
 						wData.push_back(sqlFields::EVENTS::DESCRIPTION);
 						wData.push_back(eventList[i][sqlFields::EVENTS::DESCRIPTION]);
+					}
+
+					//tell the client wats gucci
+					writeConnection(this->sockfd, wData);
+					wData.clear();
+				}
+			}
+
+			//give the client the bar's specials
+			std::vector<std::map<std::string, std::string> > specialList=
+				getSpecials(userConnection, barid);
+
+			if(specialList.size() > 0)
+			{
+				for(int i=0;i<specialList.size();++i)
+				{
+					wData.push_back("S");
+					wData.push_back(data[0].c_str());//bar id
+					wData.push_back(specialList[i][sqlFields::SPECIALINFO::ID]);
+
+					if(specialList[i][sqlFields::SPECIALINFO::EVENTID] != "")
+					{
+						wData.push_back(sqlFields::SPECIALINFO::EVENTID);
+						wData.push_back(specialList[i][sqlFields::SPECIALINFO::EVENTID]);
+					}
+
+					if(specialList[i][sqlFields::SPECIALINFO::DRINKID] != "")
+					{
+						wData.push_back(sqlFields::SPECIALINFO::DRINKID);
+						wData.push_back(specialList[i][sqlFields::SPECIALINFO::DRINKID]);
+					}
+
+					if(specialList[i][sqlFields::SPECIALINFO::PRICE] != "")
+					{
+						wData.push_back(sqlFields::SPECIALINFO::PRICE);
+						wData.push_back(specialList[i][sqlFields::SPECIALINFO::PRICE]);
 					}
 
 					//tell the client wats gucci
