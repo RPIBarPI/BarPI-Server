@@ -190,6 +190,7 @@ int main(int argc, char *argv[])
 
 	//mutex
 	mutex=(pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(mutex, NULL);
 
 	//command line
 	pthread_t commandThread;
@@ -328,6 +329,7 @@ int main(int argc, char *argv[])
 			pthread_join(*(itr->second)->sThreads[i], NULL);
 	}
 
+	pthread_mutex_destroy(mutex);
 	free(mutex);
 
 	dbClose();
