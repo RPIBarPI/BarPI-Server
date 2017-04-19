@@ -103,6 +103,7 @@ void insertMessage(MYSQL*, int, int, int, int, std::string);
 std::vector<std::map<std::string, std::string> > getBars(MYSQL*);
 std::vector<std::map<std::string, std::string> > getDrinks(MYSQL*, int);
 std::vector<std::map<std::string, std::string> > getEvents(MYSQL*, int);
+std::vector<std::map<std::string, std::string> > getSpecials(MYSQL*, int);
 std::map<std::string, std::string> getBarLocation(MYSQL*, int);
 bool chatOpenedToday(MYSQL*, int, int, int, int);
 std::vector<std::map<std::string, std::string> >
