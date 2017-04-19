@@ -36,26 +36,26 @@ int newUser(std::vector<std::string> &data, const int& sockfd, const std::string
 	//get the login mode, CONNECT to connect, PING for ping
 	std::string loginMode=data[1];
 
-	//userid (0 if has none)
-	regUserID=atoi(data[2].c_str());
-
-	if(regUserID == 0)
-	{
-		//assign them one and send it back
-		regUserID=insertRegUser(fromIP);
-	}
-	else if(regUserID > 0)
-	{
-		//if its a different id than in the database, give them a new id
-		if(!checkRegID(regUserID, fromIP))
-		{
-			regUserID=insertRegUser(fromIP);
-		}
-	}
-	else return 4;
-
 	if(loginMode == "CONNECT")//connect
 	{
+		//userid (0 if has none)
+		regUserID=atoi(data[2].c_str());
+
+		if(regUserID == 0)
+		{
+			//assign them one and send it back
+			regUserID=insertRegUser(fromIP);
+		}
+		else if(regUserID > 0)
+		{
+			//if its a different id than in the database, give them a new id
+			if(!checkRegID(regUserID, fromIP))
+			{
+				regUserID=insertRegUser(fromIP);
+			}
+		}
+		else return 4;
+
 		//set the user and add it to the data structure
 		pthread_mutex_lock(mutex);
 		user *tempUser=new user(sockfd, regUserID, fromIP);
