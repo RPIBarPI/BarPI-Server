@@ -11,6 +11,7 @@ std::string toUpper(std::string);
 std::string toLower(std::string);
 std::string trim(std::string);
 std::string intTOstring(int);
+std::string floatTOstring(float);
 std::string doubleTOstring(double);
 
 #endif

@@ -101,13 +101,17 @@ void insertMessage(MYSQL*, int, int, int, int, std::string);
 
 //SELECT
 std::vector<std::map<std::string, std::string> > getBars(MYSQL*);
+std::map<std::string, std::string> getBarLocation(MYSQL*, int);
+std::map<std::string, std::string> getBarRating(MYSQL*, int);
 std::vector<std::map<std::string, std::string> > getDrinks(MYSQL*, int);
 std::vector<std::map<std::string, std::string> > getEvents(MYSQL*, int);
 std::vector<std::map<std::string, std::string> > getSpecials(MYSQL*, int);
-std::map<std::string, std::string> getBarLocation(MYSQL*, int);
 bool chatOpenedToday(MYSQL*, int, int, int, int);
 std::vector<std::map<std::string, std::string> >
 getChatMessages(MYSQL*, const int, const int, const int, const int);
+
+//UPDATE
+void updateBarRating(MYSQL*, int, float, int);
 
 //OTHER
 MYSQL* getMainConnection();

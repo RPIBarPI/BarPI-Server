@@ -185,10 +185,47 @@ void user::startService(newServiceArgs* x)
 		}
 		case commands::RATE_BAR://rate a bar
 		{
+			if(data.size() < 4) break;
+
+			//get the barid
+			int barid=atoi(data[0].c_str());
+
+			//get the eventid (0=bar)
+			int eventid=atoi(data[1].c_str());
+
+			//get the rating
+			float rating=atof(data[2].c_str());
+
+			//has the user already rated the bar?
+			int ratedAlready=atoi(data[3].c_str());
+
+			if((ratedAlready < 0) || (ratedAlready > 1))
+				ratedAlready=0;
+
+			//update the new rating
+			updateBarRating(userConnection, barid, rating, !ratedAlready);
+
+			//get the new rating of a bar
+			std::map<std::string, std::string> barInfo=
+				getBarRating(userConnection, barid);
+
+			//populate wData
+			std::vector<std::string> wData;
+			wData.push_back("B");
+			wData.push_back(barInfo[sqlFields::BARS::ID]);
+			wData.push_back(sqlFields::BARS::RATING);
+			wData.push_back(barInfo[sqlFields::BARS::RATING]);
+			wData.push_back(sqlFields::BARS::TIMESRATED);
+			wData.push_back(barInfo[sqlFields::BARS::TIMESRATED]);
+
+			//tell the client wats gucci
+			writeConnection(this->sockfd, wData);
+
 			break;
 		}
 		case commands::RATE_EVENT://rate an event or special at a bar
 		{
+			//unneeded
 			break;
 		}
 		case commands::NEW_CHAT_MSG://chat message

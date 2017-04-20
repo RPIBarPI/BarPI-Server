@@ -170,6 +170,42 @@ getBarLocation(MYSQL *userConnection, int barid)
 	return newRow;
 }
 
+std::map<std::string, std::string>
+getBarRating(MYSQL *userConnection, int barid)
+{
+	std::string buffer;
+	int state;
+	MYSQL_RES *result;
+	MYSQL_FIELD *field;
+	MYSQL_ROW row;
+	buffer="SELECT "+sqlFields::BARS::ID+", "+sqlFields::BARS::RATING+", "+sqlFields::BARS::TIMESRATED;
+	buffer+=" FROM "+sqlTables::BARS+" WHERE ";
+	buffer+=sqlFields::BARS::ID+"="+intTOstring(barid);
+	state = mysql_query(userConnection, buffer.c_str());
+
+	std::map<std::string, std::string> newRow;
+	if(state == 0)
+	{
+		result = mysql_store_result(userConnection);
+
+		int num_fields=mysql_num_fields(result);
+		char* fields[num_fields];
+		for(int i=0;(field=mysql_fetch_field(result));++i)
+			fields[i]=field->name;
+
+		row=mysql_fetch_row(result);
+		if(row != NULL)
+		{
+			for(int i=0;i<num_fields;++i)
+				newRow.insert(std::pair<std::string, std::string>(fields[i], row[i]));
+		}
+
+		mysql_free_result(result);
+	}
+
+	return newRow;
+}
+
 std::vector<std::map<std::string, std::string> >
 getDrinks(MYSQL *userConnection, int barid)
 {
@@ -352,6 +388,17 @@ getChatMessages(MYSQL *userConnection, const int barid, const int eventid,
 	}
 
 	return rows;
+}
+
+//UPDATE
+void updateBarRating(MYSQL *userConnection, int barid, float newRating, int alreadyRated)
+{
+	std::string buffer;
+	buffer+="UPDATE "+sqlTables::BARS+" SET ";
+	buffer+=sqlFields::BARS::RATING+"=("+sqlFields::BARS::RATING+"+"+floatTOstring(newRating)+"), ";
+	buffer+=sqlFields::BARS::TIMESRATED+"=("+sqlFields::BARS::TIMESRATED;
+	buffer+="+"+intTOstring(alreadyRated)+") WHERE "+sqlFields::BARS::ID+"="+intTOstring(barid);
+	mysql_query(userConnection, buffer.c_str());
 }
 
 //OTHER
