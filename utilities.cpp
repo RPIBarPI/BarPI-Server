@@ -38,6 +38,13 @@ std::string intTOstring(int number)
    return ss.str();
 }
 
+std::string floatTOstring(float number)
+{
+   std::stringstream ss;
+   ss<<number;
+   return ss.str();
+}
+
 std::string doubleTOstring(double number)
 {
    std::stringstream ss;

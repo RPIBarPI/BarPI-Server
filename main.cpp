@@ -9,7 +9,7 @@ std::map<int, user*> userList;//reguserid, user pointer
 
 bool running=true;
 pthread_mutex_t *mutex;
-std::string version="0.02";
+std::string version="0.03";
 
 std::string getVersion()
 {
