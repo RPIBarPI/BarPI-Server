@@ -202,24 +202,48 @@ void user::startService(newServiceArgs* x)
 			if((ratedAlready < 0) || (ratedAlready > 1))
 				ratedAlready=0;
 
-			//update the new rating
-			updateBarRating(userConnection, barid, rating, !ratedAlready);
+			if(eventid > 0)//event rating
+			{
+				//update the new event rating
+				updateEventRating(userConnection, eventid, rating, !ratedAlready);
 
-			//get the new rating of a bar
-			std::map<std::string, std::string> barInfo=
-				getBarRating(userConnection, barid);
+				//get the new rating of a bar
+				std::map<std::string, std::string> eventInfo=
+					getEventRating(userConnection, eventid);
 
-			//populate wData
-			std::vector<std::string> wData;
-			wData.push_back("B");
-			wData.push_back(barInfo[sqlFields::BARS::ID]);
-			wData.push_back(sqlFields::BARS::RATING);
-			wData.push_back(barInfo[sqlFields::BARS::RATING]);
-			wData.push_back(sqlFields::BARS::TIMESRATED);
-			wData.push_back(barInfo[sqlFields::BARS::TIMESRATED]);
+				//populate wData
+				std::vector<std::string> wData;
+				wData.push_back("H");
+				wData.push_back(eventInfo[sqlFields::BARS::ID]);
+				wData.push_back(sqlFields::BARS::RATING);
+				wData.push_back(eventInfo[sqlFields::BARS::RATING]);
+				wData.push_back(sqlFields::BARS::TIMESRATED);
+				wData.push_back(eventInfo[sqlFields::BARS::TIMESRATED]);
 
-			//tell the client wats gucci
-			writeConnection(this->sockfd, wData);
+				//tell the client wats gucci
+				writeConnection(this->sockfd, wData);
+			}
+			else
+			{
+				//update the new bar rating
+				updateBarRating(userConnection, barid, rating, !ratedAlready);
+
+				//get the new rating of a bar
+				std::map<std::string, std::string> barInfo=
+					getBarRating(userConnection, barid);
+
+				//populate wData
+				std::vector<std::string> wData;
+				wData.push_back("B");
+				wData.push_back(barInfo[sqlFields::BARS::ID]);
+				wData.push_back(sqlFields::BARS::RATING);
+				wData.push_back(barInfo[sqlFields::BARS::RATING]);
+				wData.push_back(sqlFields::BARS::TIMESRATED);
+				wData.push_back(barInfo[sqlFields::BARS::TIMESRATED]);
+
+				//tell the client wats gucci
+				writeConnection(this->sockfd, wData);
+			}
 
 			break;
 		}

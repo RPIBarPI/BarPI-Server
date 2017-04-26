@@ -44,6 +44,8 @@ struct sqlFields
 		static const std::string NAME;
 		static const std::string DESCRIPTION;
 		static const std::string ISEVENTTODAY;
+		static const std::string RATING;
+		static const std::string TIMESRATED;
 	};//events/specials
 
 	struct DRINKS
@@ -103,6 +105,7 @@ void insertMessage(MYSQL*, int, int, int, int, std::string);
 std::vector<std::map<std::string, std::string> > getBars(MYSQL*);
 std::map<std::string, std::string> getBarLocation(MYSQL*, int);
 std::map<std::string, std::string> getBarRating(MYSQL*, int);
+std::map<std::string, std::string> getEventRating(MYSQL*, int);
 std::vector<std::map<std::string, std::string> > getDrinks(MYSQL*, int);
 std::vector<std::map<std::string, std::string> > getEvents(MYSQL*, int);
 std::vector<std::map<std::string, std::string> > getSpecials(MYSQL*, int);
@@ -112,6 +115,7 @@ getChatMessages(MYSQL*, const int, const int, const int, const int);
 
 //UPDATE
 void updateBarRating(MYSQL*, int, float, int);
+void updateEventRating(MYSQL*, int, float, int);
 
 //OTHER
 MYSQL* getMainConnection();

@@ -22,6 +22,8 @@ const std::string sqlFields::EVENTS::BARID="barid";
 const std::string sqlFields::EVENTS::NAME="name";
 const std::string sqlFields::EVENTS::DESCRIPTION="description";
 const std::string sqlFields::EVENTS::ISEVENTTODAY="IsEventToday";
+const std::string sqlFields::EVENTS::RATING="rating";
+const std::string sqlFields::EVENTS::TIMESRATED="timesrated";
 
 //drink
 const std::string sqlFields::DRINKS::ID="id";
@@ -181,6 +183,42 @@ getBarRating(MYSQL *userConnection, int barid)
 	buffer="SELECT "+sqlFields::BARS::ID+", "+sqlFields::BARS::RATING+", "+sqlFields::BARS::TIMESRATED;
 	buffer+=" FROM "+sqlTables::BARS+" WHERE ";
 	buffer+=sqlFields::BARS::ID+"="+intTOstring(barid);
+	state = mysql_query(userConnection, buffer.c_str());
+
+	std::map<std::string, std::string> newRow;
+	if(state == 0)
+	{
+		result = mysql_store_result(userConnection);
+
+		int num_fields=mysql_num_fields(result);
+		char* fields[num_fields];
+		for(int i=0;(field=mysql_fetch_field(result));++i)
+			fields[i]=field->name;
+
+		row=mysql_fetch_row(result);
+		if(row != NULL)
+		{
+			for(int i=0;i<num_fields;++i)
+				newRow.insert(std::pair<std::string, std::string>(fields[i], row[i]));
+		}
+
+		mysql_free_result(result);
+	}
+
+	return newRow;
+}
+
+std::map<std::string, std::string>
+getEventRating(MYSQL *userConnection, int eventid)
+{
+	std::string buffer;
+	int state;
+	MYSQL_RES *result;
+	MYSQL_FIELD *field;
+	MYSQL_ROW row;
+	buffer="SELECT "+sqlFields::EVENTS::ID+", "+sqlFields::EVENTS::RATING+", "+sqlFields::EVENTS::TIMESRATED;
+	buffer+=" FROM "+sqlTables::EVENTS+" WHERE ";
+	buffer+=sqlFields::EVENTS::ID+"="+intTOstring(eventid);
 	state = mysql_query(userConnection, buffer.c_str());
 
 	std::map<std::string, std::string> newRow;
@@ -398,6 +436,16 @@ void updateBarRating(MYSQL *userConnection, int barid, float newRating, int alre
 	buffer+=sqlFields::BARS::RATING+"=("+sqlFields::BARS::RATING+"+"+floatTOstring(newRating)+"), ";
 	buffer+=sqlFields::BARS::TIMESRATED+"=("+sqlFields::BARS::TIMESRATED;
 	buffer+="+"+intTOstring(alreadyRated)+") WHERE "+sqlFields::BARS::ID+"="+intTOstring(barid);
+	mysql_query(userConnection, buffer.c_str());
+}
+
+void updateEventRating(MYSQL *userConnection, int eventid, float newRating, int alreadyRated)
+{
+	std::string buffer;
+	buffer+="UPDATE "+sqlTables::EVENTS+" SET ";
+	buffer+=sqlFields::EVENTS::RATING+"=("+sqlFields::EVENTS::RATING+"+"+floatTOstring(newRating)+"), ";
+	buffer+=sqlFields::EVENTS::TIMESRATED+"=("+sqlFields::EVENTS::TIMESRATED;
+	buffer+="+"+intTOstring(alreadyRated)+") WHERE "+sqlFields::EVENTS::ID+"="+intTOstring(eventid);
 	mysql_query(userConnection, buffer.c_str());
 }
 
