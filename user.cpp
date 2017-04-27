@@ -413,6 +413,11 @@ void user::startService(newServiceArgs* x)
 						wData.push_back(eventList[i][sqlFields::EVENTS::DESCRIPTION]);
 					}
 
+					wData.push_back(sqlFields::EVENTS::RATING);
+					wData.push_back(eventList[i][sqlFields::EVENTS::RATING]);
+					wData.push_back(sqlFields::EVENTS::TIMESRATED);
+					wData.push_back(eventList[i][sqlFields::EVENTS::TIMESRATED]);
+
 					//tell the client wats gucci
 					writeConnection(this->sockfd, wData);
 					wData.clear();
@@ -534,6 +539,11 @@ void user::startService(newServiceArgs* x)
 						wData.push_back(sqlFields::EVENTS::DESCRIPTION);
 						wData.push_back(eventList[i][sqlFields::EVENTS::DESCRIPTION]);
 					}
+
+					wData.push_back(sqlFields::EVENTS::RATING);
+					wData.push_back(eventList[i][sqlFields::EVENTS::RATING]);
+					wData.push_back(sqlFields::EVENTS::TIMESRATED);
+					wData.push_back(eventList[i][sqlFields::EVENTS::TIMESRATED]);
 
 					//tell the client wats gucci
 					writeConnection(this->sockfd, wData);
